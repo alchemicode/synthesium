@@ -78,7 +78,7 @@ end
 function Enemy:die(gd, p)
     if self.deadTimer == 0 then
         if self.currentFrame ~= 1 then self.currentFrame = 1 end
-        self.deadTimer = 0.6875
+        self.deadTimer = 0.7
         self:updateKills(gd, p)
     end
 end
@@ -218,7 +218,15 @@ function Enemy:update(gd, p, dt)
     end
 end
 
-function Enemy:draw()
+function InView(x, y, cam_x, cam_y)
+    local width = love.graphics.getWidth()
+    local height = love.graphics.getHeight()
+    local p_x = x + 16
+    local p_y = y + 16
+    return p_x >= cam_x - width and p_x <= cam_x + width and p_y >= cam_y - height and p_y <= cam_y + height
+end
+
+function Enemy:draw(cam_x, cam_y)
     if self.state < 2 then
         local frame
         if self.deadTimer == 0 then
@@ -226,8 +234,10 @@ function Enemy:draw()
         else
             frame = self.deathFrames[self.currentFrame]
         end
-        love.graphics.draw(self.spritesheet, frame, math.floor(self.x), math.floor(self.y),
-            0,
-            (1 - (2 * self.flipped)) * self.xScaleFactor, self.yScaleFactor, self.spriteW / 2, self.spriteH)
+        if InView(self.x, self.y, cam_x, cam_y) then
+            love.graphics.draw(self.spritesheet, frame, math.floor(self.x), math.floor(self.y),
+                0,
+                (1 - (2 * self.flipped)) * self.xScaleFactor, self.yScaleFactor, self.spriteW / 2, self.spriteH)
+        end
     end
 end

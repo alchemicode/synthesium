@@ -76,13 +76,23 @@ function GenerateMap(w, h, deathtiles, state)
     end
 end
 
-function DrawMap()
+function InView(x, y, cam_x, cam_y)
+    local width = love.graphics.getWidth()
+    local height = love.graphics.getHeight()
+    local p_x = x * 32 + 16
+    local p_y = y * 32 + 16
+    return p_x >= cam_x - width and p_x <= cam_x + width and p_y >= cam_y - height and p_y <= cam_y + height
+end
+
+function DrawMap(cam_x, cam_y)
     for i = 1, mapW do
         for j = 1, mapH do
             local t = map[i][j].tile
             local s = map[i][j].sheet
             if t ~= 0 then
-                love.graphics.draw(Tileset[s], Tiles[s][t], math.floor((i - 1) * TileW), math.floor((j - 1) * TileH))
+                if InView(i, j, cam_x, cam_y) then
+                    love.graphics.draw(Tileset[s], Tiles[s][t], math.floor((i - 1) * TileW), math.floor((j - 1) * TileH))
+                end
             end
         end
     end

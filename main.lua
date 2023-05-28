@@ -10,8 +10,8 @@ require "src/ui"
 local state = 0
 local paused = false
 
-MapW = 512
-MapH = 512
+MapW = 256
+MapH = 256
 local player
 local cam
 
@@ -176,10 +176,10 @@ function love.draw()
     else
         love.graphics.push()
         cam:draw()
-        DrawMap()
+        DrawMap(cam.x, cam.y)
         player:draw()
         for i = 1, #enemies do
-            enemies[i]:draw()
+            enemies[i]:draw(cam.x, cam.y)
         end
         love.graphics.pop()
         DrawUI(player)
