@@ -2,8 +2,8 @@
 
 require "src/deathtile"
 
-local mapW = 64
-local mapH = 64
+local mapW = 256
+local mapH = 256
 local map = {}
 
 TileW = 32
@@ -79,9 +79,12 @@ end
 function InView(x, y, cam_x, cam_y)
     local width = love.graphics.getWidth()
     local height = love.graphics.getHeight()
-    local p_x = x * 32 + 16
-    local p_y = y * 32 + 16
-    return p_x >= cam_x - width and p_x <= cam_x + width and p_y >= cam_y - height and p_y <= cam_y + height
+    local p_x = x * 32
+    local p_y = y * 32
+    return p_x >= cam_x - width / 2
+        and p_x - 32 <= cam_x + width / 2
+        and p_y >= cam_y - height / 2
+        and p_y - 32 <= cam_y + height / 2
 end
 
 function DrawMap(cam_x, cam_y)

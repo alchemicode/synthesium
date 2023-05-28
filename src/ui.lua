@@ -42,10 +42,14 @@ function DrawUI(player)
             love.graphics.draw(heart, h_pos, 25, 0, 2, 2)
             h_pos = h_pos + heart:getWidth()
         end
-        -- love.graphics.draw(fE, 25, love.graphics:getHeight() - 100 - 64)
-        -- love.graphics.draw(wE, 25, love.graphics:getHeight() - 75 - 48)
-        -- love.graphics.draw(elE, 25, love.graphics:getHeight() - 50 - 32)
-        -- love.graphics.draw(eE, 25, love.graphics:getHeight() - 25 - 16)
+        love.graphics.draw(fE, 25, height - 100 - 64, 0, 1, 1)
+        love.graphics.print(tostring(player.fireEssence), font, 49, height - 100 - 64 - font:getHeight() / 4)
+        love.graphics.draw(wE, 25, height - 75 - 48, 0, 1, 1)
+        love.graphics.print(tostring(player.waterEssence), font, 49, height - 75 - 48 - font:getHeight() / 4)
+        love.graphics.draw(elE, 25, height - 50 - 32, 0, 1, 1)
+        love.graphics.print(tostring(player.elecEssence), font, 49, height - 50 - 32 - font:getHeight() / 4)
+        love.graphics.draw(eE, 25, height - 25 - 16, 0, 1, 1)
+        love.graphics.print(tostring(player.earthEssence), font, 49, height - 25 - 16 - font:getHeight() / 4)
     end
 
     love.graphics.print("FPS: " .. tostring(love.timer.getFPS()), 10, height / 2)

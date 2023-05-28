@@ -221,9 +221,10 @@ end
 function InView(x, y, cam_x, cam_y)
     local width = love.graphics.getWidth()
     local height = love.graphics.getHeight()
-    local p_x = x + 16
-    local p_y = y + 16
-    return p_x >= cam_x - width and p_x <= cam_x + width and p_y >= cam_y - height and p_y <= cam_y + height
+    return x >= cam_x - width / 2
+        and x - 16 <= cam_x + width / 2
+        and y >= cam_y - height / 2
+        and y - 32 <= cam_y + height / 2
 end
 
 function Enemy:draw(cam_x, cam_y)
@@ -234,10 +235,9 @@ function Enemy:draw(cam_x, cam_y)
         else
             frame = self.deathFrames[self.currentFrame]
         end
-        if InView(self.x, self.y, cam_x, cam_y) then
-            love.graphics.draw(self.spritesheet, frame, math.floor(self.x), math.floor(self.y),
-                0,
-                (1 - (2 * self.flipped)) * self.xScaleFactor, self.yScaleFactor, self.spriteW / 2, self.spriteH)
-        end
+        love.graphics.draw(self.spritesheet, frame, math.floor(self.x), math.floor(self.y),
+            0,
+            (1 - (2 * self.flipped)) * self.xScaleFactor, self.yScaleFactor, self.spriteW / 2, self.spriteH)
+        --if InView(self.x, self.y, cam_x, cam_y) then end
     end
 end
