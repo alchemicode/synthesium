@@ -24,7 +24,7 @@ local fv_y = 0
 
 
 function Player:new()
-    self.super:new(16, 32, "res/jackal.png")
+    self.super:new(16, 32, "res/jackal.png", 0)
     self.frames = {}
     for i = 1, 5 do
         for j = 1, 4 do
@@ -179,10 +179,9 @@ function Player:update(dt)
     self:fuse(dt)
     self:handleFrames(dt)
 
+    self.super.update(self, dt)
     self.x = self.x + self.vel.x * dt
     self.y = self.y - self.vel.y * dt
-
-    self.super.update(self, dt)
 
     if damageTimer > 0 then
         damageTimer = math.max(damageTimer - dt, 0)

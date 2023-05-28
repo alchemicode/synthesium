@@ -44,14 +44,11 @@ function Entity:checkOverlap(e)
     and top <= o_bottom
 end
 
-
-function Entity:onOverlap(e)
-    if self.collision == 0 then
-        print(tostring(self) .. " overlapped with " .. tostring(e))
-    else
-        print(tostring(self) .. " collided with " .. tostring(e))
-        self.x = self.last_x
-        self.y = self.last_y
-    end
-    
+function Clamp(val, min, max)
+	if val < min then
+		val = min
+	elseif max < val then
+		val = max
+	end
+	return val
 end

@@ -2,8 +2,11 @@
 
 require "src/deathtile"
 
-local mapW = 256
-local mapH = 256
+local gfx = love.graphics
+local l_math = love.math
+
+local mapW = 32
+local mapH = 32
 local map = {}
 
 TileW = 32
@@ -13,14 +16,14 @@ Tileset = {}
 Tiles = {}
 
 function LoadTileset(tileset)
-    local image = love.graphics.newImage(tileset)
+    local image = gfx.newImage(tileset)
     local tilesetW, tilesetH = image:getWidth(), image:getHeight()
     table.insert(Tileset, image)
     local sheet = {
-        love.graphics.newQuad(0, 0, TileW, TileH, tilesetW, tilesetH),
-        love.graphics.newQuad(32, 0, TileW, TileH, tilesetW, tilesetH),
-        love.graphics.newQuad(0, 32, TileW, TileH, tilesetW, tilesetH),
-        love.graphics.newQuad(32, 32, TileW, TileH, tilesetW, tilesetH)
+        gfx.newQuad(0, 0, TileW, TileH, tilesetW, tilesetH),
+        gfx.newQuad(32, 0, TileW, TileH, tilesetW, tilesetH),
+        gfx.newQuad(0, 32, TileW, TileH, tilesetW, tilesetH),
+        gfx.newQuad(32, 32, TileW, TileH, tilesetW, tilesetH)
     }
     table.insert(Tiles, sheet)
 end
@@ -36,15 +39,15 @@ end
 function GenerateMap(w, h, deathtiles, state)
     mapW = w
     mapH = h
-    Seed = love.math.random(75, 150)
+    Seed = l_math.random(75, 150)
     for i = 1, mapW do
         map[i] = {}
         for j = 1, mapH do
             map[i][j] = {}
-            local noise1 = love.math.noise(Seed * i / 1200, Seed * j / 1200)
-            local noise2 = love.math.noise(Seed * i / 25000, Seed * j / 25000)
             local tile = 0
             local sheet = 0
+            -- First layer of noise is for the layout (holes and tiles)
+            local noise1 = l_math.noise(Seed * i / 1350, Seed * j / 1350)
             if noise1 < 0.15 then
                 table.insert(
                     deathtiles,
@@ -64,11 +67,19 @@ function GenerateMap(w, h, deathtiles, state)
             else
                 tile = 4
             end
-
-            if noise2 < 0.5 then
+            if i == 1 or j == 1 or i == mapW or j == mapH then
+                if tile > 0 then tile = 1 
+                else tile = 0 end
+            end
+            
+            -- Second layer of noise determines the biome
+            local noise2 = l_math.noise(Seed * i / 25000, Seed * j / 25000)
+            if noise2 < 0.35 then
                 sheet = 1
-            else
+            elseif noise2 < 0.75 then
                 sheet = 2
+            else
+                sheet = 3
             end
             map[i][j].tile = tile
             map[i][j].sheet = sheet
@@ -76,9 +87,9 @@ function GenerateMap(w, h, deathtiles, state)
     end
 end
 
-function InView(x, y, cam_x, cam_y)
-    local width = love.graphics.getWidth()
-    local height = love.graphics.getHeight()
+function TileInView(x, y, cam_x, cam_y)
+    local width = gfx.getWidth()
+    local height = gfx.getHeight()
     local p_x = x * 32
     local p_y = y * 32
     return p_x >= cam_x - width / 2
@@ -93,8 +104,8 @@ function DrawMap(cam_x, cam_y)
             local t = map[i][j].tile
             local s = map[i][j].sheet
             if t ~= 0 then
-                if InView(i, j, cam_x, cam_y) then
-                    love.graphics.draw(Tileset[s], Tiles[s][t], math.floor((i - 1) * TileW), math.floor((j - 1) * TileH))
+                if TileInView(i, j, cam_x, cam_y) then
+                    gfx.draw(Tileset[s], Tiles[s][t], math.floor((i - 1) * TileW), math.floor((j - 1) * TileH))
                 end
             end
         end

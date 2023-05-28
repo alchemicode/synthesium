@@ -2,6 +2,7 @@
 
 require 'src/entity'
 require 'src/aspect'
+local gfx = love.graphics
 Enemy = Entity:extend()
 
 local frameTime = 0.0625
@@ -12,9 +13,9 @@ function Enemy:new(player, asp)
     self.frames = {}
     self.deathFrames = {}
     for i = 1, 11 do
-        self.frames[i] = love.graphics.newQuad((i - 1) * 16, 0, self.spriteW, self.spriteH, self.spritesheetW,
+        self.frames[i] = gfx.newQuad((i - 1) * 16, 0, self.spriteW, self.spriteH, self.spritesheetW,
             self.spritesheetH)
-        self.deathFrames[i] = love.graphics.newQuad((i - 1) * 16, 32, self.spriteW, self.spriteH, self.spritesheetW,
+        self.deathFrames[i] = gfx.newQuad((i - 1) * 16, 32, self.spriteW, self.spriteH, self.spritesheetW,
             self.spritesheetH)
     end
     self.vel = { x = 0, y = 0 }
@@ -77,8 +78,8 @@ end
 
 function Enemy:die(gd, p)
     if self.deadTimer == 0 then
-        if self.currentFrame ~= 1 then self.currentFrame = 1 end
-        self.deadTimer = 0.7
+        self.deadTimer = 0.9
+        self.currentFrame = 1
         self:updateKills(gd, p)
     end
 end
@@ -195,16 +196,15 @@ function Enemy:update(gd, p, dt)
             self.flipped = 0
         end
 
-        self:handleFrames(dt)
-
         if self.deadTimer == 0 then
             self:behavior(p, dt)
             self:checkPlayerCollision(gd, p)
         end
 
+        self:handleFrames(dt)
 
-        self.x = self.x + self.vel.x * dt
-        self.y = self.y + self.vel.y * dt
+        self.x = Clamp(0,self.x + self.vel.x * dt, 257*32)
+        self.y = Clamp(0,self.y + self.vel.y * dt, 257*32)
 
         -- Updates last_x and last_y
         self.super.update(self, dt)
@@ -218,26 +218,28 @@ function Enemy:update(gd, p, dt)
     end
 end
 
-function InView(x, y, cam_x, cam_y)
-    local width = love.graphics.getWidth()
-    local height = love.graphics.getHeight()
-    return x >= cam_x - width / 2
-        and x - 16 <= cam_x + width / 2
-        and y >= cam_y - height / 2
-        and y - 32 <= cam_y + height / 2
+function Enemy:inView(cam_x, cam_y)
+    local width = gfx.getWidth()
+    local height = gfx.getHeight()
+    return self.x >= cam_x - width / 2
+        and self.x - 16 <= cam_x + width / 2
+        and self.y >= cam_y - height / 2
+        and self.y - 32 <= cam_y + height / 2
 end
 
 function Enemy:draw(cam_x, cam_y)
     if self.state < 2 then
-        local frame
-        if self.deadTimer == 0 then
-            frame = self.frames[self.currentFrame]
-        else
-            frame = self.deathFrames[self.currentFrame]
+        if self:inView(cam_x, cam_y) then 
+            local frame
+            if self.deadTimer == 0 then
+                frame = self.frames[self.currentFrame]
+            else
+                frame = self.deathFrames[self.currentFrame]
+            end
+            gfx.draw(self.spritesheet, frame, math.floor(self.x), math.floor(self.y),
+                0,
+                (1 - (2 * self.flipped)) * self.xScaleFactor*1.2, self.yScaleFactor*1.2, self.spriteW/2, self.spriteH)
+            
         end
-        love.graphics.draw(self.spritesheet, frame, math.floor(self.x), math.floor(self.y),
-            0,
-            (1 - (2 * self.flipped)) * self.xScaleFactor, self.yScaleFactor, self.spriteW / 2, self.spriteH)
-        --if InView(self.x, self.y, cam_x, cam_y) then end
     end
 end

@@ -1,6 +1,7 @@
 -- camera.lua
 
 Object = require 'dependencies/classic'
+local gfx = love.graphics
 Camera = Object:extend()
 
 local shakeWait = 0
@@ -47,5 +48,5 @@ function Camera:update(dt)
 end
 
 function Camera:draw()
-    love.graphics.translate(math.floor(-self.x + self.screenWidth / 2), math.floor(-self.y + self.screenHeight / 2))
+    gfx.translate(math.floor(-self.x + self.screenWidth / 2), math.floor(-self.y + self.screenHeight / 2))
 end
