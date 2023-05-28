@@ -14,20 +14,19 @@ local yScaleFactor = 1
 local damageTime = 2
 local damageTimer = 0
 
-local fusing = false
 local fuseTime = 0.4
 local fuseTimer = 0
 local fuseSpeed = 65
-local fuseAcceleration = 1
 
 -- fuse velocity (direction)
 local fv_x = 0
 local fv_y = 0
 
+
 function Player:new()
     self.super:new(16, 32, "res/jackal.png")
     self.frames = {}
-    for i = 1, 3 do
+    for i = 1, 5 do
         for j = 1, 4 do
             self.frames[j + ((i - 1) * 4)] = love.graphics.newQuad((j - 1) * 18, (i - 1) * 34, self.spriteW, self
                 .spriteH, self.spritesheetW, self.spritesheetH)
@@ -37,12 +36,17 @@ function Player:new()
     self.speed = 300
     self.canWalk = true
 
+    self.fireEssence = 0
+    self.waterEssence = 0
+    self.elecEssence = 0
+    self.earthEssence = 0
+
     self.aspect = 0
     self.health = 3
     self.dead = false
 end
 
-function lerp(a, b, t)
+function Lerp(a, b, t)
     return a + (b - a) * t
 end
 
@@ -52,14 +56,32 @@ function Player:onSpace()
     end
 end
 
-function fuseVelocity(t)
+function FuseVelocity(t)
     local mult = 4 / fuseTime
     return (-4 * (mult * t - 2) ^ 2) + 16
 end
 
-function fuseContraction(t)
+function FuseContraction(t)
     local mult = 4 / fuseTime
     return (mult * math.sqrt(0.125) * t - math.sqrt(0.5)) ^ 2 + 0.5
+end
+
+function Player:reset()
+    self.vel = { x = 0, y = 0 }
+    self.speed = 300
+    self.canWalk = true
+
+    self.fireEssence = 0
+    self.waterEssence = 0
+    self.elecEssence = 0
+    self.earthEssence = 0
+
+    self.aspect = 0
+    self.health = 3
+    self.dead = false
+
+    xScaleFactor = 1
+    yScaleFactor = 1
 end
 
 function Player:die()
@@ -77,19 +99,19 @@ function Player:fuse(dt)
         if fv_x == 0 and fv_y == 0 then
             local ffv_x = (1 - (2 * flipped))
             local ffv_y = 0
-            self.vel.x = ffv_x * fuseVelocity(fuseTime - fuseTimer) * fuseSpeed
-            self.vel.y = ffv_y * fuseVelocity(fuseTime - fuseTimer) * fuseSpeed
-            xScaleFactor = 1 + fuseVelocity(fuseTime - fuseTimer) / 4
-            yScaleFactor = fuseContraction(fuseTime - fuseTimer)
+            self.vel.x = ffv_x * FuseVelocity(fuseTime - fuseTimer) * fuseSpeed
+            self.vel.y = ffv_y * FuseVelocity(fuseTime - fuseTimer) * fuseSpeed
+            xScaleFactor = 1 + FuseVelocity(fuseTime - fuseTimer) / 4
+            yScaleFactor = FuseContraction(fuseTime - fuseTimer)
         else
-            self.vel.x = fv_x + fv_x * fuseVelocity(fuseTime - fuseTimer) * fuseSpeed
-            self.vel.y = fv_y + fv_y * fuseVelocity(fuseTime - fuseTimer) * fuseSpeed
+            self.vel.x = fv_x + fv_x * FuseVelocity(fuseTime - fuseTimer) * fuseSpeed
+            self.vel.y = fv_y + fv_y * FuseVelocity(fuseTime - fuseTimer) * fuseSpeed
             if math.abs(fv_x) > math.abs(fv_y) then
-                xScaleFactor = 1 + math.abs(fv_x * fuseVelocity(fuseTime - fuseTimer) / 4)
-                yScaleFactor = fuseContraction(fuseTime - fuseTimer)
+                xScaleFactor = 1 + math.abs(fv_x * FuseVelocity(fuseTime - fuseTimer) / 4)
+                yScaleFactor = FuseContraction(fuseTime - fuseTimer)
             else
                 xScaleFactor = 1
-                yScaleFactor = 1 + math.abs(fv_y * fuseVelocity(fuseTime - fuseTimer) / 8)
+                yScaleFactor = 1 + math.abs(fv_y * FuseVelocity(fuseTime - fuseTimer) / 8)
             end
         end
     else

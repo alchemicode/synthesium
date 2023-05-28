@@ -13,9 +13,6 @@ Tileset = {}
 Tiles = {}
 
 function LoadTileset(tileset)
-    for i = 1, #map do
-        table.remove(map, i)
-    end
     local image = love.graphics.newImage(tileset)
     local tilesetW, tilesetH = image:getWidth(), image:getHeight()
     table.insert(Tileset, image)
@@ -32,7 +29,11 @@ function GetMapTile(x, y)
     return map[x][y].tile
 end
 
-function GenerateMap(w, h, deathtiles)
+function GetMapSheet(x, y)
+    return map[x][y].sheet
+end
+
+function GenerateMap(w, h, deathtiles, state)
     mapW = w
     mapH = h
     Seed = love.math.random(75, 150)
@@ -40,7 +41,7 @@ function GenerateMap(w, h, deathtiles)
         map[i] = {}
         for j = 1, mapH do
             map[i][j] = {}
-            local noise1 = love.math.noise(Seed * i / 1000, Seed * j / 1000)
+            local noise1 = love.math.noise(Seed * i / 1200, Seed * j / 1200)
             local noise2 = love.math.noise(Seed * i / 25000, Seed * j / 25000)
             local tile = 0
             local sheet = 0
@@ -75,7 +76,7 @@ function GenerateMap(w, h, deathtiles)
     end
 end
 
-function drawMap()
+function DrawMap()
     for i = 1, mapW do
         for j = 1, mapH do
             local t = map[i][j].tile

@@ -2,7 +2,7 @@
 
 function love.conf(t)
 	t.console = true
-    t.window.title = "Synthesium"
+    t.window.title = "Synthesia"
     t.window.width = 1280
     t.window.height = 720
 end
