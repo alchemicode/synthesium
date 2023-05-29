@@ -121,9 +121,9 @@ function SpawnEnemy()
             local sheet = GetMapSheet(spawn_x, spawn_y)
             local aspRand = math.random(0, 100)
             if sheet == 1 then
-                if aspRand < 40 then
+                if aspRand < 45 then
                     asp = 2
-                elseif aspRand < 80 then
+                elseif aspRand < 90 then
                     asp = 4
                 else
                     asp = 3
@@ -131,14 +131,18 @@ function SpawnEnemy()
             elseif sheet == 2 then
                 if aspRand < 50 then
                     asp = 4
-                else
+                elseif aspRand < 90 then
                     asp = 1
+                else
+                    asp = 2
                 end
             elseif sheet == 3 then
-                if aspRand < 60 then
+                if aspRand < 33 then
                     asp = 1
-                else
+                elseif aspRand < 67 then
                     asp = 3
+                else
+                    asp = 4
                 end
             end
         end
@@ -217,11 +221,6 @@ function love.keypressed(key)
 end
 
 function HandleEnemySpawns(dt)
-    GameData.time = GameData.time + dt
-    local minutes = math.fmod(GameData.time,3600)/60.0
-    GameData.diff = 1 + minutes * 0.5
-    GameData.spawnTime = math.max(0.5, -math.sqrt(48*minutes/GameData.diff)+10)
-    
     if GameData.spawnTimer > math.ceil(GameData.spawnTime) then
         SpawnEnemy()
         GameData.spawnTimer = 0
@@ -257,6 +256,10 @@ function love.update(dt)
                 healthGenerators[i]:update(dt)
             end
             if not player.dead then
+                GameData.time = GameData.time + dt
+                local minutes = math.fmod(GameData.time,3600)/60.0
+                GameData.diff = 1 + minutes * 0.5
+                GameData.spawnTime = math.max(0.5, -math.sqrt(48*minutes/GameData.diff)+9)
                 HandleEnemySpawns(dt)
                 Music_PlaySynthesium()
             end
