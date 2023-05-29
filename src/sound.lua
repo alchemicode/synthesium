@@ -25,7 +25,7 @@ function LoadSound()
     s_fuse = l_a.newSource("res/sfx/fuse.ogg", "static")
     s_fuse:setVolume(0.5)
 
-    m_synth = l_a.newSource("res/music/Synthesium.ogg", "stream")
+    m_synth = l_a.newSource("res/music/Synthesium.ogg", "static")
     m_synth:setVolume(0.25)
 end
 

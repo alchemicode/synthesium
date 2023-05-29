@@ -80,6 +80,7 @@ function Enemy:die(gd, p)
     if self.deadTimer == 0 then
         self.deadTimer = 0.9
         self.currentFrame = 1
+        SFX_PlayDeath()
         self:updateKills(gd, p)
     end
 end
