@@ -113,8 +113,6 @@ end
 function SpawnEnemy()
     local spawn_x, spawn_y
     local asp = 1
-    local tile
-    local blocked = false
     repeat
         spawn_x = math.random(1, MapW - 1)
         spawn_y = math.random(1, MapH - 1)
@@ -123,37 +121,44 @@ function SpawnEnemy()
             local sheet = GetMapSheet(spawn_x, spawn_y)
             local aspRand = math.random(0, 100)
             if sheet == 1 then
-                if aspRand < 67 then
+                if aspRand < 40 then
                     asp = 2
-                else
+                elseif aspRand < 80 then
                     asp = 4
+                else
+                    asp = 3
                 end
             elseif sheet == 2 then
-                if aspRand < 67 then
-                    asp = 1
-                else
+                if aspRand < 50 then
                     asp = 4
+                else
+                    asp = 1
                 end
             elseif sheet == 3 then
-                if aspRand < 67 then
+                if aspRand < 60 then
                     asp = 1
                 else
                     asp = 3
                 end
             end
-            for i=1,#healthGenerators do
-                local h = healthGenerators[i]
-                if Distance(spawn_x*32, spawn_y*32, h.x,h.y) > 640 then
-                    if h.aspect == asp then
-                        blocked = true
-                    end
-                end
+        end
+    until (tile > 2 and Distance(player.x, player.y, spawn_x * 32 + 16, spawn_y * 32 + 16) > 384)
+    local blocked = false
+    for i=1,#healthGenerators do
+        local h = healthGenerators[i]
+        if h.aspect == asp then
+            if Distance(spawn_x*32+16, spawn_y*32+16, h.x,h.y) > 512 then
+                blocked = true
+                break
             end
         end
-    until (tile > 2 and not blocked and Distance(player.x, player.y, spawn_x * 32 + 16, spawn_y * 32 + 16) > 384)
-    local enemy = Enemy(player, asp)
-    enemy:translate(spawn_x * 32 + 16, spawn_y * 32 + 16)
-    table.insert(enemies, enemy)
+    end
+    if not blocked then
+        local enemy = Enemy(player, asp)
+        enemy:translate(spawn_x * 32 + 16, spawn_y * 32 + 16)
+        table.insert(enemies, enemy)
+    end
+    
 end
 
 function love.mousepressed(x, y, button, istouch)

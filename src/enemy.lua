@@ -136,12 +136,12 @@ end
 -- Switches enemy between wander and chase states
 function Enemy:behavior(p, dt)
     local dist = math.sqrt((self.x - p.x) ^ 2 + (self.y - p.y) ^ 2)
-    if dist > 256 then
-        if self.state == 1 and self.state ~= 2 then self.state = 0 end
-        self:wander(p, dt)
-    else
+    if dist < 256 and p.aspect ~= self.aspect then
         if self.state < 1 then self.state = 1 end
         self:chase(p, dist, dt)
+    else
+        if self.state == 1 and self.state ~= 2 then self.state = 0 end
+        self:wander(p, dt)
     end
 end
 

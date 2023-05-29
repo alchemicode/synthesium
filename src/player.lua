@@ -187,13 +187,6 @@ function Player:update(dt)
     self.super.update(self, dt)
     self.x = self.x + self.vel.x * dt
     self.y = self.y - self.vel.y * dt
-
-    if self.x < -self.spriteW/2 
-    or self.x > MapW*32 + self.spriteW/2 
-    or self.y < - self.spriteH/2 
-    or self.y > MapH*32 + self.spriteH/2 then
-        self:die()
-    end
         
     if self.damageTimer > 0 then
         self.damageTimer = math.max(self.damageTimer - dt, 0)
@@ -206,6 +199,13 @@ function Player:update(dt)
         if xScaleFactor > 0 and yScaleFactor > 0 then
             xScaleFactor = xScaleFactor - dt
             yScaleFactor = yScaleFactor - dt
+        end
+    else
+        if self.x < -self.spriteW/2 
+        or self.x > MapW*32 + self.spriteW/2 
+        or self.y < - self.spriteH/2 
+        or self.y > MapH*32 + self.spriteH/2 then
+            self:die()
         end
     end
 end
