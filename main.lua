@@ -143,7 +143,7 @@ function SpawnEnemy()
             end
             for i=1,#healthGenerators do
                 local h = healthGenerators[i]
-                if Distance(spawn_x*32, spawn_y*32, h.x,h.y) then
+                if Distance(spawn_x*32, spawn_y*32, h.x,h.y) > 640 then
                     if h.aspect == asp then
                         blocked = true
                     end
