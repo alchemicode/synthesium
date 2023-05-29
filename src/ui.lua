@@ -10,12 +10,12 @@ local fE, wE, elE, eE
 Difficulty = 1
 
 function LoadUI()
-    heartCase = gfx.newImage("res/heartslot.png")
-    heart = gfx.newImage("res/heart.png")
-    fE = gfx.newImage("res/fireEssence.png")
-    wE = gfx.newImage("res/waterEssence.png")
-    elE = gfx.newImage("res/elecEssence.png")
-    eE = gfx.newImage("res/earthEssence.png")
+    heartCase = gfx.newImage("res/UI/heartslot.png")
+    heart = gfx.newImage("res/UI/heart.png")
+    fE = gfx.newImage("res/UI/fireEssence.png")
+    wE = gfx.newImage("res/UI/waterEssence.png")
+    elE = gfx.newImage("res/UI/elecEssence.png")
+    eE = gfx.newImage("res/UI/earthEssence.png")
 end
 
 function DrawUI(gd, player, showGenUI)
@@ -64,10 +64,10 @@ function DrawUI(gd, player, showGenUI)
         gfx.print(tostring(player.earthEssence), font, 50, height - 25 - 16 - font:getHeight() / 4)
 
         if showGenUI then
-            gfx.print("Press '1'", font, 64, height - 100 - 64 - font:getHeight() / 4)
-            gfx.print("Press '2'", font, 64, height - 75 - 48 - font:getHeight() / 4)
-            gfx.print("Press '3'", font, 64, height - 50 - 32 - font:getHeight() / 4)
-            gfx.print("Press '4'", font, 64, height - 25 - 16 - font:getHeight() / 4)
+            gfx.print("Press '1'", font, 80, height - 100 - 64 - font:getHeight() / 4)
+            gfx.print("Press '2'", font, 80, height - 75 - 48 - font:getHeight() / 4)
+            gfx.print("Press '3'", font, 80, height - 50 - 32 - font:getHeight() / 4)
+            gfx.print("Press '4'", font, 80, height - 25 - 16 - font:getHeight() / 4)
         end
         
     end

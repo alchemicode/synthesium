@@ -12,7 +12,6 @@ local xScaleFactor = 1
 local yScaleFactor = 1
 
 local damageTime = 2
-local damageTimer = 0
 
 local fuseTime = 0.4
 local fuseTimer = 0
@@ -24,7 +23,7 @@ local fv_y = 0
 
 
 function Player:new()
-    self.super:new(16, 32, "res/jackal.png", 0)
+    self.super:new(16, 32, "res/sprites/jackal.png", 0)
     self.frames = {}
     for i = 1, 5 do
         for j = 1, 4 do
@@ -35,6 +34,8 @@ function Player:new()
     self.vel = { x = 0, y = 0 }
     self.speed = 300
     self.canWalk = true
+
+    self.damageTimer = 0
 
     self.fireEssence = 0
     self.waterEssence = 0
@@ -68,7 +69,7 @@ end
 
 function Player:reset()
     self.vel = { x = 0, y = 0 }
-    self.speed = 300
+    self.speed = 320
     self.canWalk = true
 
     self.fireEssence = 0
@@ -115,7 +116,7 @@ function Player:fuse(dt)
             end
         end
     else
-        if self.canWalk == false then self.canWalk = true end
+        if not self.canWalk then self.canWalk = true end
         local mag = math.sqrt((self.vel.x ^ 2) + (self.vel.y ^ 2))
         if mag == 0 then
             fv_x = 0
@@ -147,8 +148,8 @@ function Player:handleFrames(dt)
 end
 
 function Player:damage()
-    if damageTimer == 0 then
-        damageTimer = damageTime
+    if self.damageTimer == 0 then
+        self.damageTimer = damageTime
         if self.health == 1 then
             self:die()
         end
@@ -183,8 +184,15 @@ function Player:update(dt)
     self.x = self.x + self.vel.x * dt
     self.y = self.y - self.vel.y * dt
 
-    if damageTimer > 0 then
-        damageTimer = math.max(damageTimer - dt, 0)
+    if self.x < -self.spriteW/2 
+    or self.x > MapW*32 + self.spriteW/2 
+    or self.y < - self.spriteH/2 
+    or self.y > MapH*32 + self.spriteH/2 then
+        self:die()
+    end
+        
+    if self.damageTimer > 0 then
+        self.damageTimer = math.max(self.damageTimer - dt, 0)
     end
 
     if self.dead then
@@ -201,6 +209,6 @@ end
 function Player:draw()
     if xScaleFactor > 0 and yScaleFactor > 0 then
         love.graphics.draw(self.spritesheet, self.frames[currentFrame + (self.aspect * 4)], math.floor(self.x),
-            math.floor(self.y), 0, (1 - (2 * flipped)) * xScaleFactor, yScaleFactor, self.spriteW / 2, self.spriteH)
+            math.floor(self.y), 0, (1 - (2 * flipped)) * xScaleFactor * 1.1, yScaleFactor * 1.1, self.spriteW / 2, self.spriteH)
     end
 end

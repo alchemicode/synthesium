@@ -6,12 +6,15 @@ require "src/healthgenerator"
 require "src/camera"
 require "src/map"
 require "src/menu"
+require "src/sound"
 require "src/ui"
 
 local gfx = love.graphics
 
 local state = 0
 local paused = false
+
+local bg
 
 MapW = 256
 MapH = 256
@@ -29,11 +32,13 @@ GameData = {}
 -- Loads necessary visual elements for map and UI
 function love.load()
     gfx.setDefaultFilter("nearest")
-    LoadTileset("res/tilemap-grassy.png")
-    LoadTileset("res/tilemap-desert.png")
-    LoadTileset("res/tilemap-volcano.png")
+    LoadTileset("res/tiles/tilemap-grassy.png")
+    LoadTileset("res/tiles/tilemap-desert.png")
+    LoadTileset("res/tiles/tilemap-volcano.png")
+    LoadSound()
     LoadMenu()
     LoadUI()
+    bg = gfx.newImage("res/bg.png")
 end
 
 -- Initializes or resets GameData
@@ -67,8 +72,8 @@ function NewGame()
     GenerateMap(MapW, MapH, deathTiles, state)
     local spawn_x, spawn_y
     repeat
-        spawn_x = math.random(0, MapW-1)
-        spawn_y = math.random(0, MapH-1)
+        spawn_x = math.random(1, MapW-1)
+        spawn_y = math.random(1, MapH-1)
     until (GetMapTile(spawn_x, spawn_y) > 2)
     if state == 0 then
         player = Player()
@@ -98,13 +103,13 @@ function SpawnHealthGenerators()
             local spawn_x
             local spawn_y
             repeat
-                spawn_x = math.random(0, math.min(i*(MapW/2), MapW-1))
-                spawn_y = math.random(0, math.min(j*(MapW/2), MapH-1))
+                spawn_x = math.random(1, math.min(i*(MapW/2), MapW-1))
+                spawn_y = math.random(1, math.min(j*(MapW/2), MapH-1))
                 local md = 999
                 for i=1,#healthGenerators do
                     md = math.min(md, Distance(spawn_x,spawn_y,healthGenerators[i].x,healthGenerators[i].y))
                 end
-            until (GetMapTile(spawn_x, spawn_y) > 2 and md > 512)
+            until (GetMapTile(spawn_x, spawn_y) > 2 and md > 16*32)
             local g = HealthGenerator(spawn_x*32, spawn_y*32, player, GameData,0)
             table.insert(healthGenerators,g)
         end
@@ -114,32 +119,45 @@ end
 -- Spawns an enemy at a random spot, and decides its aspect based on the biome
 function SpawnEnemy()
     local spawn_x, spawn_y
+    local asp = 1
+    local tile
+    local blocked = false
     repeat
         spawn_x = math.random(1, MapW - 1)
         spawn_y = math.random(1, MapH - 1)
-    until (GetMapTile(spawn_x, spawn_y) > 2 and Distance(player.x, player.y, spawn_x * 32 + 16, spawn_y * 32 + 16) > 384)
-    local sheet = GetMapSheet(spawn_x, spawn_y)
-    local aspRand = math.random(0, 100)
-    local asp = 1
-    if sheet == 1 then
-        if aspRand < 67 then
-            asp = 2
-        else
-            asp = 4
+        local tile = GetMapTile(spawn_x, spawn_y)
+        if tile > 2 then
+            local sheet = GetMapSheet(spawn_x, spawn_y)
+            local aspRand = math.random(0, 100)
+            if sheet == 1 then
+                if aspRand < 67 then
+                    asp = 2
+                else
+                    asp = 4
+                end
+            elseif sheet == 2 then
+                if aspRand < 67 then
+                    asp = 1
+                else
+                    asp = 4
+                end
+            elseif sheet == 3 then
+                if aspRand < 67 then
+                    asp = 1
+                else
+                    asp = 3
+                end
+            end
+            for i=1,#healthGenerators do
+                local h = healthGenerators[i]
+                if Distance(spawn_x*32, spawn_y*32, h.x,h.y) then
+                    if h.aspect == asp then
+                        blocked = true
+                    end
+                end
+            end
         end
-    elseif sheet == 2 then
-        if aspRand < 67 then
-            asp = 1
-        else
-            asp = 4
-        end
-    elseif sheet == 3 then
-        if aspRand < 67 then
-            asp = 1
-        else
-            asp = 3
-        end
-    end
+    until (tile > 2 and not blocked and Distance(player.x, player.y, spawn_x * 32 + 16, spawn_y * 32 + 16) > 384)
     local enemy = Enemy(player, asp)
     enemy:translate(spawn_x * 32 + 16, spawn_y * 32 + 16)
     table.insert(enemies, enemy)
@@ -150,6 +168,7 @@ function love.mousepressed(x, y, button, istouch)
         if button == 1 then
             if MouseClick(x, y) == 1 then
                 NewGame()
+                SFX_PlayConfirm()
                 state = 1
             end
         end
@@ -222,7 +241,7 @@ function love.update(dt)
             healthGenerators[i]:checkCollision(player)
             healthGenerators[i]:update(dt)
         end
-        if player.dead == false then
+        if not player.dead then
             HandleEnemySpawns(dt)
         end
         
@@ -230,6 +249,7 @@ function love.update(dt)
 end
 
 function love.draw()
+    gfx.draw(bg,0,0)
     if state == 0 then
         DrawMenu()
     else

@@ -1,5 +1,6 @@
 -- menu.lua
 
+local gfx = love.graphics
 
 local buttonWidth = 128
 local buttonHeight = 48
@@ -20,11 +21,14 @@ function MouseClick(x, y)
 end
 
 function DrawMenu()
-    love.graphics.setColor(0, 0, 0.25, 1)
-    love.graphics.rectangle("fill", 640 - (buttonWidth / 2), 360, buttonWidth, buttonHeight)
-    love.graphics.setColor(1, 1, 1, 1)
-    local font = love.graphics.newFont(24)
+    gfx.setColor(0, 0, 0.25, 1)
+    gfx.rectangle("fill", 640 - (buttonWidth / 2), 360, buttonWidth, buttonHeight)
+    gfx.rectangle("fill", 640 - (buttonWidth/2), 360 + 25 + buttonHeight)
+    gfx.setColor(1, 1, 1, 1)
+    local font = gfx.newFont(24)
     local textWidth = font:getWidth("Play")
     local textHeight = font:getHeight()
-    love.graphics.print("Play", font, 640 - (textWidth / 2), 360 + (textHeight / 3))
+    gfx.print("Play", font, 640 - (textWidth / 2), 360 + (textHeight / 3))
+    textWidth = Font:getWidth("How To Play")
+    gfx.print("How To Play", font, 640 - (textWidth / 2), 360 + 25 + buttonHeight + (textHeight / 3))
 end

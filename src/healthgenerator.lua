@@ -6,7 +6,7 @@ HealthGenerator = Entity:extend()
 local gfx = love.graphics
 
 function HealthGenerator:new(x, y, p, gd, asp)
-    self.super.new(self, 32,37,"res/healthGenerator.png", 1)
+    self.super.new(self, 32,37,"res/sprites/healthGenerator.png", 1)
     self.x = x
     self.y = y
     
@@ -46,18 +46,16 @@ function HealthGenerator:checkCollision(e)
     end
 end
 
-
-
 function HealthGenerator:interact(p, asp)
-    local req = 3 + BoolToInt(self.aspect == asp) * 2
+    local req = 3 + 2*BoolToInt(self.aspect == asp)
+    local amount
     if asp == 1 then 
         if p.fireEssence >= req then
             p.fireEssence = p.fireEssence - req
             p.health = p.health+1
             self.aspect = asp
         else
-            -- put a sound effect here
-            print("no lol")
+            SFX_PlayError()
         end
     elseif asp == 2 then
         if p.waterEssence >= req then
@@ -65,8 +63,7 @@ function HealthGenerator:interact(p, asp)
             p.health = p.health+1
             self.aspect = asp
         else
-            -- put a sound effect here
-            print("no lol")
+            SFX_PlayError()
         end
     elseif asp == 3 then
         if p.elecEssence >= req then
@@ -74,8 +71,7 @@ function HealthGenerator:interact(p, asp)
             p.health = p.health+1
             self.aspect = asp
         else
-            -- put a sound effect here
-            print("no lol")
+            SFX_PlayError()
         end
     elseif asp == 4 then
         if p.earthEssence >= req then
@@ -83,8 +79,7 @@ function HealthGenerator:interact(p, asp)
             p.health = p.health+1
             self.aspect = asp
         else
-            -- put a sound effect here
-            print("no lol")
+            SFX_PlayError()
         end
     end
     
@@ -92,7 +87,7 @@ end
 
 function HealthGenerator:update(dt)
     local dist = Distance(self.x+self.spriteW/2,self.y+self.spriteH,self.player.x, self.player.y)
-    self.showUI = dist < 48
+    self.showUI = dist < 96
 end
 
 function HealthGenerator:inView(cam_x, cam_y)

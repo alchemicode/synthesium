@@ -9,7 +9,7 @@ local frameTime = 0.0625
 local deathFrameTime = 0.0909090909
 
 function Enemy:new(player, asp)
-    self.super.new(self, 16, 32, "res/enemy-" .. tostring(asp) .. ".png", 0)
+    self.super.new(self, 16, 32, "res/sprites/enemy-" .. tostring(asp) .. ".png", 0)
     self.frames = {}
     self.deathFrames = {}
     for i = 1, 11 do
@@ -20,7 +20,7 @@ function Enemy:new(player, asp)
     end
     self.vel = { x = 0, y = 0 }
     self.accel = { x = 0, y = 0 }
-    self.speed = 150
+    self.speed = 180
     self.aspect = asp
     self.canWalk = true
     self.player = player
@@ -116,7 +116,7 @@ end
 
 -- Checks and handles collisions with player
 function Enemy:checkPlayerCollision(gd, p)
-    if self:checkOverlap(p) and p.dead == false then
+    if self:checkOverlap(p) and not p.dead then
         if p.canWalk then
             local r = Reaction(p.aspect, self.aspect)
             if r == -1 then
@@ -186,6 +186,15 @@ function Enemy:chase(p, dist, dt)
     end
 end
 
+function Clamp(val, min, max)
+	if val <= min then
+		val = min
+	elseif max <= val then
+		val = max
+	end
+	return val
+end
+
 function Enemy:update(gd, p, dt)
     -- Handling sprite direction
     if self.state ~= 2 then
@@ -203,8 +212,8 @@ function Enemy:update(gd, p, dt)
 
         self:handleFrames(dt)
 
-        self.x = Clamp(0,self.x + self.vel.x * dt, 257*32)
-        self.y = Clamp(0,self.y + self.vel.y * dt, 257*32)
+        self.x = Clamp(0,self.x + self.vel.x * dt, MapW*32)
+        self.y = Clamp(0,self.y + self.vel.y * dt, MapH*32)
 
         -- Updates last_x and last_y
         self.super.update(self, dt)
@@ -238,7 +247,7 @@ function Enemy:draw(cam_x, cam_y)
             end
             gfx.draw(self.spritesheet, frame, math.floor(self.x), math.floor(self.y),
                 0,
-                (1 - (2 * self.flipped)) * self.xScaleFactor*1.2, self.yScaleFactor*1.2, self.spriteW/2, self.spriteH)
+                (1 - (2 * self.flipped)) * self.xScaleFactor*1.25, self.yScaleFactor*1.25, self.spriteW/2, self.spriteH)
             
         end
     end
