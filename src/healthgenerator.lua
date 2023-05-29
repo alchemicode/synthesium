@@ -47,13 +47,14 @@ function HealthGenerator:checkCollision(e)
 end
 
 function HealthGenerator:interact(p, asp)
-    local req = 3 + 2*BoolToInt(self.aspect == asp)
-    local amount
+    local req = 5
+    if self.aspect == asp then req = 3 end
     if asp == 1 then 
         if p.fireEssence >= req then
             p.fireEssence = p.fireEssence - req
             p.health = p.health+1
             self.aspect = asp
+            SFX_PlayHeal()
         else
             SFX_PlayError()
         end
@@ -62,6 +63,7 @@ function HealthGenerator:interact(p, asp)
             p.waterEssence = p.waterEssence - req
             p.health = p.health+1
             self.aspect = asp
+            SFX_PlayHeal()
         else
             SFX_PlayError()
         end
@@ -70,6 +72,7 @@ function HealthGenerator:interact(p, asp)
             p.elecEssence = p.elecEssence - req
             p.health = p.health+1
             self.aspect = asp
+            SFX_PlayHeal()
         else
             SFX_PlayError()
         end
@@ -78,6 +81,7 @@ function HealthGenerator:interact(p, asp)
             p.earthEssence = p.earthEssence - req
             p.health = p.health+1
             self.aspect = asp
+            SFX_PlayHeal()
         else
             SFX_PlayError()
         end

@@ -89,10 +89,12 @@ function Player:die()
     self.health = 0
     self.canWalk = false
     self.dead = true
+    SFX_PlayDeath()
 end
 
 function Player:fuse(dt)
     if fuseTimer > 0 then
+        SFX_PlayFuse()
         if self.canWalk then
             self.canWalk = false
         end
@@ -152,6 +154,8 @@ function Player:damage()
         self.damageTimer = damageTime
         if self.health == 1 then
             self:die()
+        else
+            SFX_PlayDamage()
         end
         self.health = self.health - 1
     end

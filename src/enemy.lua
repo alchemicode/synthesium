@@ -212,8 +212,8 @@ function Enemy:update(gd, p, dt)
 
         self:handleFrames(dt)
 
-        self.x = Clamp(0,self.x + self.vel.x * dt, MapW*32)
-        self.y = Clamp(0,self.y + self.vel.y * dt, MapH*32)
+        self.x = Clamp(32,self.x + self.vel.x * dt, (MapW-1)*32)
+        self.y = Clamp(32,self.y + self.vel.y * dt, (MapH-1)*32)
 
         -- Updates last_x and last_y
         self.super.update(self, dt)

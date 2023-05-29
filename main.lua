@@ -166,10 +166,16 @@ end
 function love.mousepressed(x, y, button, istouch)
     if state == 0 then
         if button == 1 then
-            if MouseClick(x, y) == 1 then
+            if ClickedPlay(x, y) then
                 NewGame()
                 SFX_PlayConfirm()
                 state = 1
+            end
+            if ClickedTut(x,y) then
+                SFX_PlayConfirm()
+            end
+            if ClickedBack(x,y) then
+                SFX_PlayConfirm()
             end
         end
     end
@@ -243,6 +249,10 @@ function love.update(dt)
         end
         if not player.dead then
             HandleEnemySpawns(dt)
+            Music_PlaySynthesium()
+        end
+        if player.dead then
+            Music_StopSynthesium()
         end
         
     end
