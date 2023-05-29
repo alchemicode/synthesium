@@ -8,6 +8,7 @@ require "src/map"
 require "src/menu"
 require "src/sound"
 require "src/ui"
+require "src/util"
 
 local gfx = love.graphics
 
@@ -84,14 +85,6 @@ function NewGame()
     for i = 1, 64 do
         SpawnEnemy()
     end
-end
-
-function Distance(x1, y1, x2, y2)
-    return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
-end
-
-function BoolToInt(bool)
-    return bool and 1 or 0
 end
 
 function SpawnHealthGenerators()
@@ -178,6 +171,15 @@ function love.mousepressed(x, y, button, istouch)
                 SFX_PlayConfirm()
             end
         end
+    else
+        if paused then
+            if ClickedTut(x,y) then
+                SFX_PlayConfirm()
+            end
+            if ClickedBack(x,y) then
+                SFX_PlayConfirm()
+            end
+        end
     end
 end
 
@@ -194,7 +196,6 @@ function love.keypressed(key)
                 healthGenerators[i]:interact(player, 4)
             end
         end
-        
     end
     if key == "space" then
         player:onSpace()
@@ -203,6 +204,10 @@ function love.keypressed(key)
     if key == "r" and player.dead then
         NewGame()
         player:reset()
+    end
+    if key == "escape" and state == 1 then 
+        paused = not paused
+        SFX_PlayConfirm()
     end
 end
 
@@ -221,63 +226,64 @@ function HandleEnemySpawns(dt)
 end
 
 function love.update(dt)
-    if state == 0 then
-        --updateMenu(dt)
-    else
-        cam:update(dt)
-        player:update(dt)
-        for i, v in pairs(enemies) do
-            if v ~= nil then
-                v:update(GameData, player, dt)
-                if v.state == 2 then
-                    v = nil
-                end
-            else
-                table.remove(enemies, i)
-            end
-        end
-        for i = 1, #deathTiles do
-            if deathTiles[i]:checkOverlap(player) then
-                if player.canWalk then
-                    player:die()
+    if state == 1 then
+        if not paused then
+            cam:update(dt)
+            player:update(dt)
+            for i, v in pairs(enemies) do
+                if v ~= nil then
+                    v:update(GameData, player, dt)
+                    if v.state == 2 then
+                        v = nil
+                    end
+                else
+                    table.remove(enemies, i)
                 end
             end
+            for i = 1, #deathTiles do
+                if deathTiles[i]:checkOverlap(player) then
+                    if player.canWalk then
+                        player:die()
+                    end
+                end
+            end
+            for i = 1, #healthGenerators do
+                healthGenerators[i]:checkCollision(player)
+                healthGenerators[i]:update(dt)
+            end
+            if not player.dead then
+                HandleEnemySpawns(dt)
+                Music_PlaySynthesium()
+            end
+            if player.dead then
+                Music_StopSynthesium()
+            end
         end
-        for i = 1, #healthGenerators do
-            healthGenerators[i]:checkCollision(player)
-            healthGenerators[i]:update(dt)
-        end
-        if not player.dead then
-            HandleEnemySpawns(dt)
-            Music_PlaySynthesium()
-        end
-        if player.dead then
-            Music_StopSynthesium()
-        end
-        
     end
 end
 
 function love.draw()
     gfx.draw(bg,0,0)
-    if state == 0 then
-        DrawMenu()
-    else
-        gfx.push()
-        cam:draw()
-        DrawMap(cam.x, cam.y)
-        local showGenUI = false
-        for i = 1, #healthGenerators do
-            healthGenerators[i]:draw(cam.x, cam.y)
-            if healthGenerators[i].showUI == true then 
-                showGenUI = true
+    DrawMenu(state,paused)
+    if state == 1 then
+        if not paused then
+            gfx.push()
+            cam:draw()
+            DrawMap(cam.x, cam.y)
+            local showGenUI = false
+            for i = 1, #healthGenerators do
+                healthGenerators[i]:draw(cam.x, cam.y)
+                if healthGenerators[i].showUI == true then 
+                    showGenUI = true
+                end
             end
+            player:draw()
+            for i = 1, #enemies do
+                enemies[i]:draw(cam.x, cam.y)
+            end
+            gfx.pop()
+            DrawUI(GameData, player,showGenUI)
         end
-        player:draw()
-        for i = 1, #enemies do
-            enemies[i]:draw(cam.x, cam.y)
-        end
-        gfx.pop()
-        DrawUI(GameData, player,showGenUI)
     end
+    
 end

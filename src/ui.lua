@@ -72,5 +72,5 @@ function DrawUI(gd, player, showGenUI)
         
     end
 
-    gfx.print("FPS: " .. tostring(love.timer.getFPS()), 10, height / 2)
+    -- gfx.print("FPS: " .. tostring(love.timer.getFPS()), 10, height / 2)
 end

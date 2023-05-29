@@ -26,7 +26,7 @@ function LoadSound()
     s_fuse:setVolume(0.5)
 
     m_synth = l_a.newSource("res/music/Synthesium.ogg", "stream")
-    m_synth:setVolume(0.4)
+    m_synth:setVolume(0.25)
 end
 
 function SFX_PlayConfirm()
@@ -71,8 +71,14 @@ function Music_PlaySynthesium()
     end
 end
 
-function Music_StopSynthesium()
+function Music_PauseSynthesium()
     if not m_synth:isPlaying() then
+        m_synth:pause()
+    end
+end
+
+function Music_StopSynthesium()
+    if m_synth:isPlaying() then
         m_synth:stop()
     end
 end
