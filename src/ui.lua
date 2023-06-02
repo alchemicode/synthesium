@@ -54,21 +54,36 @@ function DrawUI(gd, player, showGenUI)
             gfx.draw(heart, h_pos, 25, 0, 2, 2)
             h_pos = h_pos + heart:getWidth()
         end
-        gfx.draw(fE, 25, height - 100 - 64, 0, 1, 1)
-        gfx.print(tostring(player.fireEssence), font, 50, height - 100 - 64 - font:getHeight() / 4)
-        gfx.draw(wE, 25, height - 75 - 48, 0, 1, 1)
-        gfx.print(tostring(player.waterEssence), font, 50, height - 75 - 48 - font:getHeight() / 4)
-        gfx.draw(elE, 25, height - 50 - 32, 0, 1, 1)
-        gfx.print(tostring(player.elecEssence), font, 50, height - 50 - 32 - font:getHeight() / 4)
-        gfx.draw(eE, 25, height - 25 - 16, 0, 1, 1)
-        gfx.print(tostring(player.earthEssence), font, 50, height - 25 - 16 - font:getHeight() / 4)
 
+        gfx.push()
         if showGenUI then
-            gfx.print("Press '1'", font, 80, height - 100 - 64 - font:getHeight() / 4)
-            gfx.print("Press '2'", font, 80, height - 75 - 48 - font:getHeight() / 4)
-            gfx.print("Press '3'", font, 80, height - 50 - 32 - font:getHeight() / 4)
-            gfx.print("Press '4'", font, 80, height - 25 - 16 - font:getHeight() / 4)
+            local tw = font:getWidth("Press '1'")
+            gfx.setColor(0.16078,0.16078,0.16078,0.6)
+            gfx.rectangle("fill", 20, height - 100 - 64 - 5, 68+tw, 150,8)
+            gfx.setColor(0.502,0.502,0.502)
+            gfx.rectangle("line", 20, height - 100 - 64 - 5, 68+tw, 150,8)
+            gfx.setColor(1,1,1)
+            gfx.print("Press '1'", font, 80, height - 100 - 64 + 2 - font:getHeight() / 4)
+            gfx.print("Press '2'", font, 80, height - 75 - 48 + 2 - font:getHeight() / 4)
+            gfx.print("Press '3'", font, 80, height - 50 - 32 + 2 - font:getHeight() / 4)
+            gfx.print("Press '4'", font, 80, height - 25 - 16 + 2 - font:getHeight() / 4)
+        else
+            gfx.setColor(0.16078,0.16078,0.16078,0.6)
+            gfx.rectangle("fill", 20, height - 100 - 64 - 5, 48, 150,8)
+            gfx.setColor(0.502,0.502,0.502)
+            gfx.rectangle("line", 20, height - 100 - 64 - 5, 48, 150,8)
+            gfx.setColor(1,1,1)
         end
+        gfx.pop()
+
+        gfx.draw(fE, 25, height - 100 - 64, 0, 1, 1)
+        gfx.print(tostring(player.fireEssence), font, 50, height - 100 - 64 + 2 - font:getHeight() / 4)
+        gfx.draw(wE, 25, height - 75 - 48, 0, 1, 1)
+        gfx.print(tostring(player.waterEssence), font, 50, height - 75 - 48 + 2 - font:getHeight() / 4)
+        gfx.draw(elE, 25, height - 50 - 32, 0, 1, 1)
+        gfx.print(tostring(player.elecEssence), font, 50, height - 50 - 32 + 2 - font:getHeight() / 4)
+        gfx.draw(eE, 25, height - 25 - 16, 0, 1, 1)
+        gfx.print(tostring(player.earthEssence), font, 50, height - 25 - 16 + 2 - font:getHeight() / 4)
         
     end
 

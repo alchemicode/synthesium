@@ -112,41 +112,13 @@ end
 -- Spawns an enemy at a random spot, and decides its aspect based on the biome
 function SpawnEnemy()
     local spawn_x, spawn_y
-    local asp = 1
+    local tile
     repeat
         spawn_x = math.random(1, MapW - 1)
         spawn_y = math.random(1, MapH - 1)
-        local tile = GetMapTile(spawn_x, spawn_y)
-        if tile > 2 then
-            local sheet = GetMapSheet(spawn_x, spawn_y)
-            local aspRand = math.random(0, 100)
-            if sheet == 1 then
-                if aspRand < 45 then
-                    asp = 2
-                elseif aspRand < 90 then
-                    asp = 4
-                else
-                    asp = 3
-                end
-            elseif sheet == 2 then
-                if aspRand < 50 then
-                    asp = 4
-                elseif aspRand < 90 then
-                    asp = 1
-                else
-                    asp = 2
-                end
-            elseif sheet == 3 then
-                if aspRand < 33 then
-                    asp = 1
-                elseif aspRand < 67 then
-                    asp = 3
-                else
-                    asp = 4
-                end
-            end
-        end
-    until (tile > 2 and Distance(player.x, player.y, spawn_x * 32 + 16, spawn_y * 32 + 16) > 384)
+        tile = GetMapTile(spawn_x, spawn_y)
+    until (tile > 2 and Distance(player.x, player.y, spawn_x * 32 + 16, spawn_y * 32 + 16) > 404 - GameData.diff*20)
+    local asp = GetRandomAspect(tile,spawn_x,spawn_y)
     local blocked = false
     for i=1,#healthGenerators do
         local h = healthGenerators[i]
