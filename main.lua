@@ -28,6 +28,8 @@ local healthGenerators = {}
 
 local enemies = {}
 
+local screenScale = 1
+
 GameData = {}
 
 -- Loads necessary visual elements for map and UI
@@ -40,6 +42,8 @@ function love.load()
     LoadMenu()
     LoadUI()
     bg = gfx.newImage("res/bg.png")
+    Canvas = gfx.newCanvas()
+
 end
 
 -- Initializes or resets GameData
@@ -117,7 +121,7 @@ function SpawnEnemy()
         spawn_x = math.random(1, MapW - 1)
         spawn_y = math.random(1, MapH - 1)
         tile = GetMapTile(spawn_x, spawn_y)
-    until (tile > 2 and Distance(player.x, player.y, spawn_x * 32 + 16, spawn_y * 32 + 16) > 404 - GameData.diff*20)
+    until (tile > 2 and Distance(player.x, player.y, spawn_x * 32 + 16, spawn_y * 32 + 16) > 340 - GameData.diff*20)
     local asp = GetRandomAspect(tile,spawn_x,spawn_y)
     local blocked = false
     for i=1,#healthGenerators do
@@ -243,12 +247,15 @@ function love.update(dt)
 end
 
 function love.draw()
+    gfx.setCanvas(Canvas)
     gfx.draw(bg,0,0)
     DrawMenu(state,paused)
     if state == 1 then
         if not paused then
+            local gscale = 1
             gfx.push()
-            cam:draw()
+            gfx.scale(gscale)
+            cam:draw(gscale)
             DrawMap(cam.x, cam.y)
             local showGenUI = false
             for i = 1, #healthGenerators do
@@ -265,5 +272,7 @@ function love.draw()
             DrawUI(GameData, player,showGenUI)
         end
     end
+    gfx.setCanvas()
+    gfx.draw(Canvas,0,0,0,screenScale)
     
 end

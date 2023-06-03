@@ -47,6 +47,6 @@ function Camera:update(dt)
     self.y = self.y - (self.y - (p_y + shakeOffset.y)) * math.min(dt * lerpSpeed, 1)
 end
 
-function Camera:draw()
-    gfx.translate(math.floor(-self.x + self.screenWidth / 2), math.floor(-self.y + self.screenHeight / 2))
+function Camera:draw(scale)
+    gfx.translate(math.floor(-self.x + self.screenWidth / 2 / scale), math.floor(-self.y + self.screenHeight / 2 / scale))
 end

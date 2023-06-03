@@ -248,7 +248,7 @@ function Enemy:draw(cam_x, cam_y)
             end
             gfx.draw(self.spritesheet, frame, math.floor(self.x), math.floor(self.y),
                 0,
-                (1 - (2 * self.flipped)) * self.xScaleFactor*1.25, self.yScaleFactor*1.25, self.spriteW/2, self.spriteH)
+                (1 - (2 * self.flipped)) * self.xScaleFactor, self.yScaleFactor, self.spriteW/2, self.spriteH)
             
         end
     end
