@@ -213,6 +213,6 @@ end
 function Player:draw()
     if xScaleFactor > 0 and yScaleFactor > 0 then
         love.graphics.draw(self.spritesheet, self.frames[currentFrame + (self.aspect * 4)], math.floor(self.x),
-            math.floor(self.y), 0, (1 - (2 * flipped)) * xScaleFactor * 1.1, yScaleFactor * 1.1, self.spriteW / 2, self.spriteH)
+            math.floor(self.y), 0, (1 - (2 * flipped)) * xScaleFactor, yScaleFactor, self.spriteW / 2, self.spriteH)
     end
 end

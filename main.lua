@@ -29,6 +29,8 @@ local healthGenerators = {}
 
 local enemies = {}
 
+local screenScale = 1
+
 GameData = {}
 BestGame = {}
 
@@ -47,6 +49,7 @@ function love.load()
     LoadMenu()
     LoadUI()
     bg = gfx.newImage("res/bg.png")
+    Canvas = gfx.newCanvas()
 end
 
 -- Initializes or resets GameData
@@ -120,41 +123,13 @@ end
 -- Spawns an enemy at a random spot, and decides its aspect based on the biome
 function SpawnEnemy()
     local spawn_x, spawn_y
-    local asp = 1
+    local tile
     repeat
         spawn_x = math.random(1, MapW - 1)
         spawn_y = math.random(1, MapH - 1)
-        local tile = GetMapTile(spawn_x, spawn_y)
-        if tile > 2 then
-            local sheet = GetMapSheet(spawn_x, spawn_y)
-            local aspRand = math.random(0, 100)
-            if sheet == 1 then
-                if aspRand < 45 then
-                    asp = 2
-                elseif aspRand < 90 then
-                    asp = 4
-                else
-                    asp = 3
-                end
-            elseif sheet == 2 then
-                if aspRand < 50 then
-                    asp = 4
-                elseif aspRand < 90 then
-                    asp = 1
-                else
-                    asp = 2
-                end
-            elseif sheet == 3 then
-                if aspRand < 33 then
-                    asp = 1
-                elseif aspRand < 67 then
-                    asp = 3
-                else
-                    asp = 4
-                end
-            end
-        end
-    until (tile > 2 and Distance(player.x, player.y, spawn_x * 32 + 16, spawn_y * 32 + 16) > 384)
+        tile = GetMapTile(spawn_x, spawn_y)
+    until (tile > 2 and Distance(player.x, player.y, spawn_x * 32 + 16, spawn_y * 32 + 16) > 340 - GameData.diff * 20)
+    local asp = GetRandomAspect(tile, spawn_x, spawn_y)
     local blocked = false
     for i = 1, #healthGenerators do
         local h = healthGenerators[i]
@@ -279,12 +254,15 @@ function love.update(dt)
 end
 
 function love.draw()
+    gfx.setCanvas(Canvas)
     gfx.draw(bg, 0, 0)
     DrawMenu(state, paused)
     if state == 1 then
         if not paused then
+            local gscale = 1
             gfx.push()
-            cam:draw()
+            gfx.scale(gscale)
+            cam:draw(gscale)
             DrawMap(cam.x, cam.y)
             local showGenUI = false
             for i = 1, #healthGenerators do
@@ -301,4 +279,6 @@ function love.draw()
             DrawUI(GameData, player, showGenUI)
         end
     end
+    gfx.setCanvas()
+    gfx.draw(Canvas, 0, 0, 0, screenScale)
 end

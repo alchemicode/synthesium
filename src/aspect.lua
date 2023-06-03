@@ -31,5 +31,39 @@ function Reaction(a, b)
     return 0
 end -- returns -1 if a is weak to b,
 
+function GetRandomAspect(tile,x,y)
+    if tile > 2 then
+        local sheet = GetMapSheet(x, x)
+        local aspRand = math.random(0, 100)
+        if sheet == 1 then
+            if aspRand < 45 then
+                return 2
+            elseif aspRand < 90 then
+                return 4
+            else
+                return 3
+            end
+        elseif sheet == 2 then
+            if aspRand < 50 then
+                return 4
+            elseif aspRand < 90 then
+                return 1
+            else
+                return 2
+            end
+        elseif sheet == 3 then
+            if aspRand < 33 then
+                return 1
+            elseif aspRand < 67 then
+                return 3
+            else
+                return 4
+            end
+        end
+    else
+        return 0
+    end
+end
+
 -- returns 0 if theyre equal
 -- returns 1 if b is weak to a
