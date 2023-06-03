@@ -21,8 +21,8 @@ function Reaction(a, b)
         if b == 1 then return 1 end
     end
     if a == 3 then
-        if b == 1 then return -1 end
-        if b == 2 or b == 4 then return 1 end
+        if b == 1 or b == 4 then return -1 end
+        if b == 2 then return 1 end
     end
     if a == 4 then
         if b == 1 or b == 3 then return -1 end

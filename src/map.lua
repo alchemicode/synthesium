@@ -68,15 +68,17 @@ function GenerateMap(w, h, deathtiles, state)
                 tile = 4
             end
             if i == 1 or j == 1 or i == mapW or j == mapH then
-                if tile > 0 then tile = 1 
-                else tile = 0 end
+                if tile > 0 then
+                    tile = 1
+                else
+                    tile = 0
+                end
             end
-            
             -- Second layer of noise determines the biome
             local noise2 = l_math.noise(Seed * i / 25000, Seed * j / 25000)
-            if noise2 < 0.35 then
+            if noise2 < 0.45 then
                 sheet = 1
-            elseif noise2 < 0.75 then
+            elseif noise2 < 0.85 then
                 sheet = 2
             else
                 sheet = 3
