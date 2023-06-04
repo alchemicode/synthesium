@@ -54,6 +54,7 @@ end
 
 -- Initializes or resets GameData
 function InitGameData()
+    GameData.level = 0
     GameData.time = 0
     GameData.fireKills = 0
     GameData.waterKills = 0
