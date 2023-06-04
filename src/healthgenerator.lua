@@ -4,6 +4,7 @@ require 'src/entity'
 HealthGenerator = Entity:extend()
 
 local gfx = love.graphics
+local kb = love.keyboard
 
 function HealthGenerator:new(x, y, p, gd, asp)
     self.super.new(self, 32,37,"res/sprites/healthGenerator.png", 1)
@@ -90,6 +91,7 @@ function HealthGenerator:interact(p, asp)
 end
 
 function HealthGenerator:update(dt)
+    print(kb.isDown("lshift"))
     local dist = Distance(self.x+self.spriteW/2,self.y+self.spriteH,self.player.x, self.player.y)
     self.showUI = dist < 96
 end

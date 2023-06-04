@@ -12,6 +12,7 @@ require "src/util"
 
 local gfx = love.graphics
 local fs = love.filesystem
+local kb = love.keyboard
 
 local state = 0
 local paused = false

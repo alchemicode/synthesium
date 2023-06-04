@@ -187,15 +187,6 @@ function Enemy:chase(p, dist, dt)
     end
 end
 
-function Clamp(val, min, max)
-	if val <= min then
-		val = min
-	elseif max <= val then
-		val = max
-	end
-	return val
-end
-
 function Enemy:update(gd, p, dt)
     -- Handling sprite direction
     if self.state ~= 2 then
