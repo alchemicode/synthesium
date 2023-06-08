@@ -1,13 +1,13 @@
--- healthgenerator.lua
+-- teleporter.lua
 
 require 'src/entity'
-HealthGenerator = Entity:extend()
+Teleporter = Entity:extend()
 
 local gfx = love.graphics
 local kb = love.keyboard
 
-function HealthGenerator:new(x, y, asp)
-    self.super.new(self, 32,37,"res/sprites/healthGenerator.png", 1)
+function Teleporter:new(x, y, asp)
+    self.super.new(self, 64,64,"res/sprites/teleporter.png", 1)
     self.x = x
     self.y = y
     
@@ -22,7 +22,7 @@ function HealthGenerator:new(x, y, asp)
     self.aspect = asp
 end
 
-function HealthGenerator:checkOverlap(e)
+function Teleporter:checkOverlap(e)
     local o_left = e.x - (e.spriteW/2)
     local o_right = e.x + (e.spriteW/2)
     local o_top = e.y - e.spriteH
@@ -37,14 +37,14 @@ function HealthGenerator:checkOverlap(e)
     and top <= o_bottom
 end
 
-function HealthGenerator:checkCollision(e)
+function Teleporter:checkCollision(e)
     if self:checkOverlap(e) then
         e.x = e.last_x
         e.y = e.last_y
     end
 end
 
-function HealthGenerator:interact(p, asp)
+function Teleporter:interact(p, asp)
     local req = 5
     if self.aspect == asp then req = 3 end
     if asp == 1 then 
@@ -87,30 +87,29 @@ function HealthGenerator:interact(p, asp)
     
 end
 
-function HealthGenerator:update(player, dt)
+function Teleporter:update(player)
     local dist = Distance(self.x+self.spriteW/2,self.y+self.spriteH,player.x, player.y)
     if not kb.isDown("lshift") then
         self.showUI = dist < 96
     else
         self.showUI = false
     end
+    
 end
 
-function HealthGenerator:inView(cam_x, cam_y)
+function Teleporter:inView(cam_x, cam_y)
     local width = gfx.getWidth()
     local height = gfx.getHeight()
     local p_x = self.x
     local p_y = self.y
     return p_x >= cam_x - width / 2
-        and p_x - 32 <= cam_x + width / 2
+        and p_x - 64 <= cam_x + width / 2
         and p_y >= cam_y - height / 2
-        and p_y - 32 <= cam_y + height / 2
+        and p_y - 64 <= cam_y + height / 2
 end
 
-function HealthGenerator:draw(cam_x,cam_y)
+function Teleporter:draw(cam_x,cam_y)
     if self:inView(cam_x, cam_y) then
         gfx.draw(self.spritesheet, self.frames[self.aspect+1], math.floor(self.x), math.floor(self.y-5))
     end
 end
-
-

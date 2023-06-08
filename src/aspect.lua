@@ -4,8 +4,8 @@
 -- 0 is weak to all,
 -- 1 fire is weak to water & strong to plant, lightning
 -- 2 water is weak to lightning, plant & strong to fire
--- 3 lightning is weak to fire & strong to water and plant
--- 4 plant is weak to fire, lightning, & strong to water
+-- 3 lightning is weak to fire and earth & strong to water
+-- 4 plant is weak to fire, & strong to water and earth
 
 
 function Reaction(a, b)
@@ -25,15 +25,15 @@ function Reaction(a, b)
         if b == 2 then return 1 end
     end
     if a == 4 then
-        if b == 1 or b == 3 then return -1 end
-        if b == 2 then return 1 end
+        if b == 1 then return -1 end
+        if b == 2 or b == 3 then return 1 end
     end
     return 0
 end -- returns -1 if a is weak to b,
 
-function GetRandomAspect(tile,x,y)
+function GetRandomAspect(level, tile, x, y)
     if tile > 2 then
-        local sheet = GetMapSheet(x, x)
+        local sheet = GetMapSheet(level,x,y)
         local aspRand = math.random(0, 100)
         if sheet == 1 then
             if aspRand < 45 then

@@ -187,15 +187,6 @@ function Enemy:chase(p, dist, dt)
     end
 end
 
-function Clamp(val, min, max)
-	if val <= min then
-		val = min
-	elseif max <= val then
-		val = max
-	end
-	return val
-end
-
 function Enemy:update(gd, p, dt)
     -- Handling sprite direction
     if self.state ~= 2 then
@@ -240,6 +231,11 @@ end
 function Enemy:draw(cam_x, cam_y)
     if self.state < 2 then
         if self:inView(cam_x, cam_y) then 
+            if self.aspect == 1 then
+                gfx.setColor(1,0.4,0,0.25)
+                gfx.circle("fill", math.floor(self.x), math.floor(self.y)-16, 24)
+                gfx.setColor(1,1,1,1)
+            end
             local frame
             if self.deadTimer == 0 then
                 frame = self.frames[self.currentFrame]
@@ -249,6 +245,7 @@ function Enemy:draw(cam_x, cam_y)
             gfx.draw(self.spritesheet, frame, math.floor(self.x), math.floor(self.y),
                 0,
                 (1 - (2 * self.flipped)) * self.xScaleFactor, self.yScaleFactor, self.spriteW/2, self.spriteH)
+            
             
         end
     end
