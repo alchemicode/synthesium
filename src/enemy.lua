@@ -8,6 +8,8 @@ Enemy = Entity:extend()
 local frameTime = 0.0625
 local deathFrameTime = 0.0909090909
 
+local sineTime = 0.6875
+
 function Enemy:new(player, asp)
     self.super.new(self, 16, 32, "res/sprites/enemy-" .. tostring(asp) .. ".png", 0)
     self.frames = {}
@@ -42,6 +44,9 @@ function Enemy:new(player, asp)
 
     self.wanderTimer = 0
     self.wanderCooldown = 0
+
+    self.sineTimer = 0
+
 end
 
 -- Switches between animation frames based on frameTimers
@@ -203,6 +208,11 @@ function Enemy:update(gd, p, dt)
         end
 
         self:handleFrames(dt)
+        if self.sineTimer <= 0 then
+            self.sineTimer = sineTime
+        else
+            self.sineTimer = self.sineTimer - dt
+        end
 
         self.x = Clamp(32,self.x + self.vel.x * dt, (MapW-1)*32)
         self.y = Clamp(32,self.y + self.vel.y * dt, (MapH-1)*32)
@@ -232,9 +242,21 @@ function Enemy:draw(cam_x, cam_y)
     if self.state < 2 then
         if self:inView(cam_x, cam_y) then 
             if self.aspect == 1 then
+                gfx.setBlendMode("add")
+                gfx.setColor(1,0.4,0,0.1)
+                gfx.circle("fill", math.floor(self.x), math.floor(self.y)-16, 24 + math.sin( 6.28 * self.sineTimer/(sineTime) - 1))
                 gfx.setColor(1,0.4,0,0.25)
-                gfx.circle("fill", math.floor(self.x), math.floor(self.y)-16, 24)
+                gfx.circle("fill", math.floor(self.x), math.floor(self.y)-16, 16 + math.sin(6.28 * self.sineTimer/(sineTime)))
                 gfx.setColor(1,1,1,1)
+                gfx.setBlendMode("alpha")
+            elseif self.aspect == 3 then
+                gfx.setBlendMode("add")
+                gfx.setColor(1,0.906,0.192,0.1)
+                gfx.circle("fill", math.floor(self.x), math.floor(self.y)-16, 24 + math.sin( 6.28 * self.sineTimer/(sineTime) - 1))
+                gfx.setColor(1,0.906,0.192,0.25)
+                gfx.circle("fill", math.floor(self.x), math.floor(self.y)-16, 16 + math.sin(6.28 * self.sineTimer/(sineTime)))
+                gfx.setColor(1,1,1,1)
+                gfx.setBlendMode("alpha")
             end
             local frame
             if self.deadTimer == 0 then

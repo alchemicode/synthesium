@@ -30,6 +30,7 @@ local enemies = {}
 
 local screenScale = 1
 
+
 GameData = {}
 BestGame = {}
 
@@ -48,6 +49,7 @@ function love.load()
     LoadMenu()
     LoadUI()
     bg = gfx.newImage("res/bg.png")
+    love.mouse.setCursor(love.mouse.newCursor("res/UI/cursor.png"))
     Canvas = gfx.newCanvas()
 end
 
@@ -99,10 +101,13 @@ function NextLevel()
     end
     player:translate(spawn_x * 32 + 16, spawn_y * 32 + 16)
     cam = Camera(player)
-    local initAmount = MapW / 2
-    for i = 1, initAmount do
-        SpawnEnemy()
+    if GameData.level ~= 12 then
+        local initAmount = MapW / 2
+        for i = 1, initAmount do
+            SpawnEnemy()
+        end
     end
+    
     state = 1
 end
 
@@ -197,6 +202,10 @@ function HandleEnemySpawns(dt)
     else
         GameData.spawnTimer = GameData.spawnTimer + dt
     end
+end
+
+function ScreenToWorld(sx,sy) 
+    return sx-(-cam.x + cam.screenWidth / 2), sy-(-cam.y + cam.screenHeight / 2)
 end
 
 function love.update(dt)

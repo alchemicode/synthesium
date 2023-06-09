@@ -63,6 +63,7 @@ function DrawUI(gd, player, showGenUI)
             h_pos = h_pos + heart:getWidth()
         end
         gfx.print("FPS: " .. love.timer.getFPS(), 36,10)
+        gfx.print("Level: " .. gd.level, 36,25)
 
         gfx.push()
         if showGenUI then

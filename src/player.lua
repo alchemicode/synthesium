@@ -3,6 +3,9 @@
 require 'src/entity'
 Player = Entity:extend()
 
+local gfx = love.graphics
+local kb = love.keyboard
+
 local frameTime = 0.1
 local frameTimer = 0
 local currentFrame = 1
@@ -92,41 +95,26 @@ function Player:die()
     SFX_PlayDeath()
 end
 
-function Player:fuse(dt)
+function Player:fuse(m_vector, dt)
     if fuseTimer > 0 then
         SFX_PlayFuse()
         if self.canWalk then
             self.canWalk = false
         end
         fuseTimer = math.max(fuseTimer - dt, 0)
-        if fv_x == 0 and fv_y == 0 then
-            local ffv_x = (1 - (2 * flipped))
-            local ffv_y = 0
-            self.vel.x = ffv_x * FuseVelocity(fuseTime - fuseTimer) * fuseSpeed
-            self.vel.y = ffv_y * FuseVelocity(fuseTime - fuseTimer) * fuseSpeed
-            xScaleFactor = 1 + FuseVelocity(fuseTime - fuseTimer) / 4
+        self.vel.x = fv_x + fv_x * FuseVelocity(fuseTime - fuseTimer) * fuseSpeed
+        self.vel.y = fv_y + fv_y * FuseVelocity(fuseTime - fuseTimer) * fuseSpeed
+        if math.abs(fv_x) > math.abs(fv_y) then
+            xScaleFactor = 1 + math.abs(fv_x * FuseVelocity(fuseTime - fuseTimer) / 4)
             yScaleFactor = FuseContraction(fuseTime - fuseTimer)
         else
-            self.vel.x = fv_x + fv_x * FuseVelocity(fuseTime - fuseTimer) * fuseSpeed
-            self.vel.y = fv_y + fv_y * FuseVelocity(fuseTime - fuseTimer) * fuseSpeed
-            if math.abs(fv_x) > math.abs(fv_y) then
-                xScaleFactor = 1 + math.abs(fv_x * FuseVelocity(fuseTime - fuseTimer) / 4)
-                yScaleFactor = FuseContraction(fuseTime - fuseTimer)
-            else
-                xScaleFactor = 1
-                yScaleFactor = 1 + math.abs(fv_y * FuseVelocity(fuseTime - fuseTimer) / 8)
-            end
+            xScaleFactor = 1
+            yScaleFactor = 1 + math.abs(fv_y * FuseVelocity(fuseTime - fuseTimer) / 8)
         end
     else
         if not self.canWalk then self.canWalk = true end
-        local mag = math.sqrt((self.vel.x ^ 2) + (self.vel.y ^ 2))
-        if mag == 0 then
-            fv_x = 0
-            fv_y = 0
-        else
-            fv_x = self.vel.x / mag
-            fv_y = self.vel.y / mag
-        end
+        fv_x = m_vector.x / m_vector.mag
+        fv_y = -m_vector.y / m_vector.mag
     end
 end
 
@@ -163,25 +151,35 @@ end
 
 function Player:update(dt)
     if self.canWalk then
-        if love.keyboard.isDown("a") then
+        if kb.isDown("a") then
             self.vel.x = -self.speed
-            if flipped == 0 then flipped = 1 end
-        elseif love.keyboard.isDown("d") then
+        elseif kb.isDown("d") then
             self.vel.x = self.speed
-            if flipped == 1 then flipped = 0 end
         else
             self.vel.x = 0
         end
-        if love.keyboard.isDown("w") then
+        if kb.isDown("w") then
             self.vel.y = self.speed
-        elseif love.keyboard.isDown("s") then
+        elseif kb.isDown("s") then
             self.vel.y = -self.speed
         else
             self.vel.y = 0
         end
     end
 
-    self:fuse(dt)
+    local smx, smy = love.mouse.getPosition()
+    local mx, my = ScreenToWorld(smx,smy)
+    local m_vector = {}
+    m_vector.x = mx - self.x
+    m_vector.y = my - self.y
+    m_vector.mag = math.sqrt(m_vector.x^2 + m_vector.y^2)
+    if m_vector.x >= 0 then
+        flipped = 0
+    else
+        flipped = 1
+    end
+
+    self:fuse(m_vector, dt)
     self:handleFrames(dt)
 
     self.super.update(self, dt)

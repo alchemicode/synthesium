@@ -58,12 +58,13 @@ function GenerateRoute(player)
     end
     local lw = 64
     local lh = 64
-    for i=1, 12 do
+    for i=1, 11 do
         route[i] = {}
         GenerateLevel(i,lw,lh)
         lw = lw + (i-1) * 8
         lh = lh + (i-1) * 8
     end
+    GenerateBossLevel()
 end
 
 function GenerateLevel(l, w, h)
@@ -147,6 +148,77 @@ function GenerateLevel(l, w, h)
             until (GetMapTile(l, spawn_x, spawn_y) > 2 and md > (w/4))
             local g = HealthGenerator(spawn_x * 32, spawn_y * 32, 0)
             table.insert(route[l].generators, g)
+        end
+    end
+end
+
+function GenerateBossLevel()
+    local shrunk = {
+        {0,0,0,1,1,1,1,1,1,0,0,0},
+        {0,0,1,1,2,2,2,2,1,1,0,0},
+        {0,1,1,2,2,2,2,2,2,1,1,0},
+        {1,1,2,2,2,2,2,2,2,2,1,1},
+        {1,2,2,2,3,3,3,3,2,2,2,1},
+        {1,2,2,2,3,3,3,3,2,2,2,1},
+        {1,2,2,2,3,3,3,3,2,2,2,1},
+        {1,2,2,2,3,3,3,3,2,2,2,1},
+        {1,2,2,2,2,2,2,2,2,2,2,1},
+        {0,1,1,2,2,2,2,2,2,1,1,0},
+        {0,0,1,1,2,2,2,2,1,1,0,0},
+        {0,0,0,1,1,1,1,1,1,0,0,0},
+    }
+    route[12] = {}
+    route[12].w = 24
+    route[12].h = 24
+    route[12].map = {}
+    route[12].deathtiles = {}
+    route[12].generators = {}
+    local t = l_math.random(100)
+    local theme = 0
+    if t < 30 then theme = 3
+    elseif t < 67 then theme = 1
+    else theme = 2 end
+    for i=1,12 do
+        route[12].map[1+((i-1)*2)] = {}
+        route[12].map[2+((i-1)*2)] = {}
+        for j=1,12 do 
+            if shrunk[i][j] == 0 then
+                for m=1,2 do
+                    for n=1,2 do
+                        route[12].map[m+((i-1)*2)][n+((j-1)*2)] = {}
+                        route[12].map[m+((i-1)*2)][n+((j-1)*2)].tile = 0
+                        route[12].map[m+((i-1)*2)][n+((j-1)*2)].sheet = theme
+                        table.insert(
+                            route[12].deathtiles,
+                            DeathTile(
+                                TileW,
+                                TileH,
+                                math.floor((m+((i-1)*2)) * TileW),
+                                math.floor((n+((j-1)*2)) * TileH)
+                            )
+                        )
+                    end
+                end
+            else
+                route[12].map[1+((i-1)*2)][1+((j-1)*2)] = {}
+                route[12].map[1+((i-1)*2)][1+((j-1)*2)].tile = shrunk[i][j]
+                route[12].map[1+((i-1)*2)][1+((j-1)*2)].sheet = theme
+                route[12].map[1+((i-1)*2)][2+((j-1)*2)] = {}
+                route[12].map[1+((i-1)*2)][2+((j-1)*2)].tile = shrunk[i][j]
+                route[12].map[1+((i-1)*2)][2+((j-1)*2)].sheet = theme
+
+                route[12].map[2+((i-1)*2)][1+((j-1)*2)] = {}
+                route[12].map[2+((i-1)*2)][1+((j-1)*2)].sheet = theme
+                route[12].map[2+((i-1)*2)][2+((j-1)*2)] = {}
+                route[12].map[2+((i-1)*2)][2+((j-1)*2)].sheet = theme
+                if shrunk[i][j] == 1 then 
+                    route[12].map[2+((i-1)*2)][1+((j-1)*2)].tile = 2
+                    route[12].map[2+((i-1)*2)][2+((j-1)*2)].tile = 2
+                else
+                    route[12].map[2+((i-1)*2)][1+((j-1)*2)].tile = shrunk[i][j]
+                    route[12].map[2+((i-1)*2)][2+((j-1)*2)].tile = shrunk[i][j]
+                end
+            end
         end
     end
 end
