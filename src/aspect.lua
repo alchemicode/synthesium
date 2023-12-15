@@ -33,7 +33,7 @@ end -- returns -1 if a is weak to b,
 
 function GetRandomAspect(level, tile, x, y)
     if tile > 2 then
-        local sheet = GetMapSheet(level,x,y)
+        local sheet = GetMapSheet(level, x, y)
         local aspRand = math.random(0, 100)
         if sheet == 1 then
             if aspRand < 45 then
